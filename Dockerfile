@@ -14,7 +14,7 @@ RUN npm ci --only=production && npm cache clean --force
 COPY . .
 
 # Expose port
-EXPOSE 5000
+EXPOSE 8000
 
 # Start application
 CMD ["node", "app.js"]
