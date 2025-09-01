@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+    # MongoDB Database
+    mongodb:
+        image: mongo:7.0
+        container_name: youtube-api-db
+        restart: unless-stopped
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: admin
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-securepassword123}
+            MONGO_INITDB_DATABASE: youtube
+        volumes:
+            - mongodb_data:/data/db
+        networks:
+            - app-network
+        # Only expose port for development - remove in production
+        ports:
+            - "27017:27017"
+
+    # YouTube API Application
+    app:
+        build: .
+        container_name: youtube-api-app
+        restart: unless-stopped
+        environment:
+            NODE_ENV: production
+            MONGO_URI: mongodb://admin:${MONGO_PASSWORD:-securepassword123}@mongodb:27017/youtube?authSource=admin
+            YOUTUBE_API_KEY: ${YOUTUBE_API_KEY}
+            SEARCH_QUERY: ${SEARCH_QUERY:-cricket}
+            FETCH_INTERVAL: ${FETCH_INTERVAL:-10000}
+            PORT: 5000
+            YOUTUBE_API_URL: https://www.googleapis.com/youtube/v3/search
+        ports:
+            - "3000:5000"
+        depends_on:
+            - mongodb
+        networks:
+            - app-network
+
+volumes:
+    mongodb_data:
+
+networks:
+    app-network:
+        driver: bridge
