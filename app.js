@@ -10,7 +10,7 @@ import { fetchAndStoreVideos } from "./controller/video.controller.js";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 // Connect to MongoDB
 connectDB();
